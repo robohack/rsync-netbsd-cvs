@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.17 2003/04/03 16:56:53 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.18 2003/06/17 22:08:04 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -16,6 +16,19 @@ export PATH
 # WARNING: this pathname needs a trailing slash!
 #
 LOCAL_REPO="/cvs/master/m-NetBSD/"
+
+# NOTE:  If you probably want the following two files in ${LOCAL_REPO}:
+#
+# main/CVSROOT/cvsignore:
+#	obj
+#	obj.*
+#	work
+#	work.*
+#
+# main/CVSROOT/config:
+#	tag=NetBSD
+#
+# and you'll want to make them immutable:  'chflags +schg'
 
 # places to run "cvs update" after the rsync is done
 #
@@ -90,6 +103,25 @@ fi
 #
 grep -v '/$' /var/log/rsync-netbsd-cvs
 echo ""
+
+# re-create directories in the REPO that we have local but of course
+# uncommitted new files within...
+#
+# we could make these immutable but since they are directories that
+# might just cause more problems than it solves...
+#
+mkdir ${LOCAL_REPO}/main/src/bin/awk
+mkdir ${LOCAL_REPO}/main/src/bin/fgrep
+mkdir ${LOCAL_REPO}/main/src/lib/libcrack
+mkdir ${LOCAL_REPO}/main/src/libexec/fingerd/samples
+mkdir ${LOCAL_REPO}/main/src/libexec/pkcrackdict
+mkdir ${LOCAL_REPO}/main/src/libexec/unpkcrackdict
+mkdir ${LOCAL_REPO}/main/src/usr.bin/grep
+mkdir ${LOCAL_REPO}/main/src/usr.bin/host
+mkdir ${LOCAL_REPO}/main/src/usr.bin/sccs
+mkdir ${LOCAL_REPO}/main/src/usr.bin/testpasswd
+mkdir ${LOCAL_REPO}/main/src/usr.bin/xd
+mkdir ${LOCAL_REPO}/main/src/usr.bin/mkcrackdict
 
 for work_dir in $WORK_DIRS; do
 	echo "================================================================"
