@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.42 2004/12/08 19:28:35 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.43 2005/01/04 21:07:49 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -43,7 +43,8 @@ WORK_DIRS="/work/NetBSD/othersrc /work/NetBSD/src /work/NetBSD/src-1.6 /work/Net
 #	remote configuration
 #
 
-SITE="anoncvs.netbsd.org"
+#SITE="anoncvs.netbsd.org"
+SITE="rsync.netbsd.org"
 METHOD="rsync://"
 # aka the "module":
 DIRECTORY="/cvsroot"
