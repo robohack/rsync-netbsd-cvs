@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.26 2003/08/28 16:19:59 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.27 2003/08/29 08:15:33 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -88,7 +88,17 @@ cp /var/log/rsync-netbsd-cvs /var/log/rsync-netbsd-cvs.old
 	        printf "START:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
 		rsync -rlptgoD -vz ${EXTERNAL} --stats --delete --delete-after --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
 		rc=$?
-	        if [ $rc -eq 0 ]; then
+		#
+		# Note that E#23 happens normally when rsync can't
+		# delete the files I've made purposefully immutable
+		# specifically so that it can't delete them.
+		#
+		# Also presumably if the remote server had a problem
+		# or there was some other filesystem error on this end
+		# then we should just give up and report what happened
+		# and wait for tomorrow to try again
+		#
+	        if [ $rc -eq 0 -o $rc -eq 23 ]; then
 	                break
 		else
 			echo ""
