@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.43 2005/01/04 21:07:49 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.44 2005/01/04 21:10:36 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -44,10 +44,14 @@ WORK_DIRS="/work/NetBSD/othersrc /work/NetBSD/src /work/NetBSD/src-1.6 /work/Net
 #
 
 #SITE="anoncvs.netbsd.org"
+#METHOD="rsync://"
+# aka the "module":
+#DIRECTORY="/cvsroot"
+#
 SITE="rsync.netbsd.org"
 METHOD="rsync://"
 # aka the "module":
-DIRECTORY="/cvsroot"
+DIRECTORY="/anoncvs"
 #
 # The "main" sub-directory doesn't exist here...
 # WARNING: this pathname needs a trailing slash!
