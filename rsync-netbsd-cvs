@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.10 2001/11/04 04:01:01 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.11 2002/01/18 20:10:30 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -92,6 +92,12 @@ for work_dir in $WORK_DIRS; do
         printf "\nSTART:%s: cvs update $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 	cd $work_dir && cvs -u -q update -P -d
         printf "\nDONE:%s: updating $work_dir\n" "$(date '+%Y/%m/%d-%T')"
+	if [ -x /usr/pkg/bin/lintpkgsrc -a -f $work_dir/packages-to-upgrade -a $(basename $work_dir) = "pkgsrc" ] ; then
+		/usr/pkg/bin/lintpkgsrc -P $work_dir -i | tee $work_dir/packages-to-upgrade.new
+		if [ -s $work_dir/packages-to-upgrade.new ] ; then
+			mv -f $work_dir/packages-to-upgrade.new  $work_dir/packages-to-upgrade
+		fi
+	fi
 done
 
 for work_dir in $WORK_DIRS_CHECK; do
