@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.34 2003/10/20 15:27:20 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.35 2004/05/05 19:15:03 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -13,9 +13,10 @@ export PATH
 #	local configuration
 #
 
-# WARNING: this pathname needs a trailing slash!
+# uncomment for testing
 #
-LOCAL_REPO="/cvs/master/m-NetBSD/"
+#RSYNC_DEBUG="-vv -n"
+#CVS_DEBUG="-n"
 
 # NOTE:  If you probably want the following two files in ${LOCAL_REPO}:
 #
@@ -32,7 +33,7 @@ LOCAL_REPO="/cvs/master/m-NetBSD/"
 
 # places to run "cvs update" after the rsync is done
 #
-WORK_DIRS="/work/NetBSD/othersrc /work/NetBSD/src /work/NetBSD/src-1.6 /work/NetBSD/xsrc /work/NetBSD/pkgsrc /most/var/httpd/htdocs-netbsd.robohack.ca"
+WORK_DIRS="/work/NetBSD/othersrc /work/NetBSD/src /work/NetBSD/src-1.6 /work/NetBSD/xsrc /work/NetBSD/pkgsrc /most/big1/www/htdocs-netbsd.robohack.ca"
 
 # places to run "cvs -n update" after the rsync is done
 #
@@ -42,19 +43,34 @@ WORK_DIRS="/work/NetBSD/othersrc /work/NetBSD/src /work/NetBSD/src-1.6 /work/Net
 #	remote configuration
 #
 
-SITE="rsync.netbsd.org"
+SITE="anoncvs.netbsd.org"
 METHOD="rsync://"
-DIRECTORY="/anoncvs"
+# aka the "module":
+DIRECTORY="/cvsroot"
+#
+# The "main" sub-directory doesn't exist here...
+# WARNING: this pathname needs a trailing slash!
+#
+LOCAL_REPO="/cvs/master/m-NetBSD/main/"
 EXTERNAL=""
 
-# for debugging
-#EXTERNAL="-vv -n"
+# old, and still available site
+#
+# WARNING: LOCAL_REPO doesn't have "/main/" on rsync.netbsd.org
+# NOTE: this affects LOCAL_MKDIRS!
+#
+#SITE="rsync.netbsd.org"
+#METHOD="rsync://"
+#DIRECTORY="/anoncvs"
+#LOCAL_REPO="/cvs/master/m-NetBSD/"
+#EXTERNAL=""
 
 # alternate site
 #
 #SITE="rsync.jp.netbsd.org"
 #METHOD="rsync://"
 #DIRECTORY="/anoncvs"
+#LOCAL_REPO="/cvs/master/m-NetBSD/main/"
 #EXTERNAL=""
 
 # alternate site using rsh (hopefully over a private link! :-)
@@ -62,6 +78,7 @@ EXTERNAL=""
 #SITE=""
 #METHOD="woods@whome.planix.com:"
 #DIRECTORY="/u5/NetBSD-CVS/"		# XXX not sure this is right any more
+#LOCAL_REPO="/cvs/master/m-NetBSD/main/"
 #EXTERNAL="-e rsh --blocking-io"
 
 # WARNING:  this script could fail to interlock properly if it can be
@@ -86,7 +103,7 @@ cp /var/log/rsync-netbsd-cvs /var/log/rsync-netbsd-cvs.old
 (
 	while true; do
 	        printf "START:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
-		rsync -rlptgoD -vz ${EXTERNAL} --stats --delete --delete-after --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
+		rsync ${DEBUG} -rlptgoD -vz ${EXTERNAL} --stats --delete --delete-after --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
 		rc=$?
 		#
 		# Note that E#23 happens normally when rsync can't
@@ -125,35 +142,35 @@ echo ""
 # we could make these immutable but since they are directories that
 # might just cause more problems than it solves...
 #
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/bin/awk"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/bin/fgrep"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/bin/nc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/dist/dhcp/contrib/ms2isc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/dist/dhcp/doc/ja_JP.eucJP"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/etc/namedb/master"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/lib/libcrack"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/libexec/fingerd/samples"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/libexec/pkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/libexec/sccs"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/libexec/unpkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/regress/usr.sbin"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/regress/usr.sbin/pwd_mkdb"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.bin/grep"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.bin/host"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.bin/sccs"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.bin/sccs/PSD.doc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.bin/testpasswd"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.bin/xd"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/flc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/flc/BNF"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/idecrypt"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/lmhw"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/mkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/update-protocols"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/tools/mkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/tools/newsyslog"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/tools/pkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/xsrc/xc/programs/xterm/X11"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/bin/awk"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/bin/fgrep"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/bin/nc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/dist/dhcp/contrib/ms2isc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/dist/dhcp/doc/ja_JP.eucJP"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/etc/namedb/master"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/lib/libcrack"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/fingerd/samples"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/pkcrackdict"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/unpkcrackdict"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/regress/usr.sbin"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/regress/usr.sbin/pwd_mkdb"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/grep"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/host"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/PSD.doc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/testpasswd"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/xd"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/flc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/flc/BNF"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/idecrypt"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/lmhw"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/mkcrackdict"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/update-protocols"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/tools/mkcrackdict"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/tools/newsyslog"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/tools/pkcrackdict"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/xsrc/xc/programs/xterm/X11"
 
 install -d -m 775 ${LOCAL_MKDIRS}
 
@@ -161,7 +178,7 @@ install -d -m 775 ${LOCAL_MKDIRS}
 for work_dir in $WORK_DIRS; do
 	echo "================================================================"
         printf "\nSTART:%s: cvs update $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
-	cd $work_dir && cvs -u -q update -P -d
+	cd $work_dir && cvs ${CVS_DEBUG} -u -q update -P -d
         printf "\nDONE:%s: updating $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 	if [ -x /usr/pkg/bin/lintpkgsrc -a -f $work_dir/packages-to-upgrade -a $(basename $work_dir) = "pkgsrc" ] ; then
 		/usr/pkg/bin/lintpkgsrc -P $work_dir -i | tee $work_dir/packages-to-upgrade.new
