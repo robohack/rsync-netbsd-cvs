@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.6 2001/07/11 04:16:17 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.7 2001/07/12 19:14:38 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -94,7 +94,7 @@ done
 for work_dir in $WORK_DIRS_CHECK; do
 	echo "Checking: $work_dir"
 	echo ""
-	cd $work_dir && cvs -nq update -P -d
+	cd $work_dir && cvs -nq update -P -d 2>&1 | fgrep -v 'cvs update: New directory'
 	echo ""
 done
 
