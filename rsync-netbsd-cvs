@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.50 2005/01/17 00:26:44 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.51 2005/03/02 19:36:58 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -158,6 +158,7 @@ echo ""
 # might just cause more problems than it solves...
 #
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/benchmarks/postal/patches"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/databases/rrdtool-nodep"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/cyrus-imapd21-cyradm"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail/files"
