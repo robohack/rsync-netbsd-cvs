@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.36 2004/10/04 16:12:57 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.37 2004/10/10 17:44:01 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -142,6 +142,23 @@ echo ""
 # we could make these immutable but since they are directories that
 # might just cause more problems than it solves...
 #
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/pkgsrc/mail/cyrus-imapd21-cyradm"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smail"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smail/files"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smail/scripts"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smail+cyrus"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smtprc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smtprc/patches"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/vrfy"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/net/whoson"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/net/whoson/files"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/net/whoson/patches"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/pkgtools/mailwrapper"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/pkgtools/mailwrapper/files"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/www/apache+modssl-local"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/www/apache+modssl-local/files"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/www/apache+modssl-local/patches"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/x11/xterm/patches"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/bin/awk"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/bin/fgrep"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/bin/nc"
