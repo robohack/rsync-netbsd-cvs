@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.40 2004/12/08 19:19:09 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.41 2004/12/08 19:22:58 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -152,6 +152,7 @@ LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smtprc/patches"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/vrfy"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/vrfy/patches"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/net/eping"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/net/eping/patches"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/pkgtools/mailwrapper"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/pkgtools/mailwrapper/files"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/sysutils/pwgen/patches"
