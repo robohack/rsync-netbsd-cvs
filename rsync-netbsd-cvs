@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.8 2001/10/01 15:49:01 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.9 2001/10/09 00:03:04 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -65,7 +65,7 @@ fi
 
 (
 	while true; do
-	        printf "START:%s: " "$(date '+%Y/%m/%d-%T')"
+	        printf "START:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
 		rsync -rlptgoD -vz ${EXTERNAL} --stats --delete --delete-after --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
 	        if [ $? -eq 0 ]; then
 	                break
@@ -76,26 +76,26 @@ fi
 	        sleep 120
 	        echo "RESTART"
 	done
-	echo Done.
+        printf "DONE:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
 ) > /var/log/rsync-netbsd-cvs 2>&1
 
-# this produces the Cron report from the raw log...
+# this produces the Cron report from the raw log by ignoring any line
+# which ends in a '/' (presumably it's just one of the directories
+# that was updated)
 #
 grep -v '/$' /var/log/rsync-netbsd-cvs
 echo ""
 
 for work_dir in $WORK_DIRS; do
-	echo "Updating: $work_dir"
-	echo ""
+        printf "\nSTART:%s: cvs update $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 	cd $work_dir && cvs -u -q update -P -d
-	echo ""
+        printf "\nDONE:%s: updating $work_dir\n" "$(date '+%Y/%m/%d-%T')"
 done
 
 for work_dir in $WORK_DIRS_CHECK; do
-	echo "Checking: $work_dir"
-	echo ""
+        printf "\nSTART:%s: cvs -n update $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 	cd $work_dir && cvs -u -nq update -P -d 2>&1 | fgrep -v 'cvs update: New directory'
-	echo ""
+        printf "\nDONE:%s: checking $work_dir\n" "$(date '+%Y/%m/%d-%T')"
 done
 
 if [ ! -d $LOCKDIR ] ; then
