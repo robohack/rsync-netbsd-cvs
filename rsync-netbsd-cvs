@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.24 2003/08/13 14:53:25 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.25 2003/08/25 22:32:00 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -123,6 +123,7 @@ LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.bin/sccs"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.bin/sccs/PSD.doc"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.bin/testpasswd"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.bin/xd"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/idecrypt"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/mkcrackdict"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/tools/mkcrackdict"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/tools/newsyslog"
