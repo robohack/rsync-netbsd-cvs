@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.21 2003/06/20 20:01:23 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.22 2003/07/31 18:17:26 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -112,6 +112,7 @@ echo ""
 #
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/bin/awk"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/bin/fgrep"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/etc/namedb/master"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/lib/libcrack"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/libexec/fingerd/samples"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/libexec/pkcrackdict"
