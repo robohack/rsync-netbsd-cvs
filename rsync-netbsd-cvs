@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.46 2005/01/08 21:30:49 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.47 2005/01/15 22:29:43 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -157,6 +157,7 @@ echo ""
 # we could make these immutable but since they are directories that
 # might just cause more problems than it solves...
 #
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/benchmarks/postal/patches"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/cyrus-imapd21-cyradm"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail/files"
