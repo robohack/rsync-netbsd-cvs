@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.13 2002/06/25 14:18:41 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.14 2002/12/08 23:49:50 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -19,7 +19,7 @@ LOCAL_REPO="/cvs/master/m-NetBSD/"
 
 # places to run "cvs update" after the rsync is done
 #
-WORK_DIRS="/work/NetBSD/doc /work/NetBSD/src /work/NetBSD/src-1.6 /work/NetBSD/xsrc /work/NetBSD/pkgsrc /most/var/httpd/htdocs-netbsd.robohack.ca"
+WORK_DIRS="/work/NetBSD/doc /work/NetBSD/othersrc /work/NetBSD/src /work/NetBSD/src-1.6 /work/NetBSD/xsrc /work/NetBSD/pkgsrc /most/var/httpd/htdocs-netbsd.robohack.ca"
 
 # places to run "cvs -n update" after the rsync is done
 #
