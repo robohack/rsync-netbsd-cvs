@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.4 2001/06/06 22:23:35 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.5 2001/07/10 08:23:03 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -20,6 +20,8 @@ LOCAL_REPO="/cvs/master/m-NetBSD/"
 # places to run "cvs update" after the rsync is done
 #
 WORK_DIRS="/work/NetBSD/doc /work/NetBSD/src /work/NetBSD/xsrc /most/var/httpd/htdocs-netbsd.robohack.ca"
+
+WORK_DIRS_CHECK="/work/woods/m-pkgsrc"
 
 #
 #	remote configuration
@@ -86,6 +88,13 @@ for work_dir in $WORK_DIRS; do
 	echo "Updating: $work_dir"
 	echo ""
 	cd $work_dir; cvs -q update -P -d
+	echo ""
+done
+
+for work_dir in $WORK_DIRS_CHECK; do
+	echo "Checking: $work_dir"
+	echo ""
+	cd $work_dir; cvs -nq update -P -d
 	echo ""
 done
 
