@@ -4,26 +4,49 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.1 2001/06/06 17:52:06 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.2 2001/06/06 18:06:43 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
+
+#
+#	local configuration
+#
+
+# WARNING: this pathname needs a trailing slash!
+#
+LOCAL_REPO="/cvs/master/m-NetBSD/"
+
+# places to run "cvs update" after the rsync is done
+#
+WORK_DIRS="/work/NetBSD/doc /work/NetBSD/src /work/NetBSD/xsrc /most/var/httpd/htdocs-netbsd.robohack.ca"
+
+#
+#	remote configuration
+#
 
 SITE="rsync.netbsd.org"
 METHOD="rsync://"
 DIRECTORY="/anoncvs"
 EXTERNAL=""
 
+# alternate site
+#
 #SITE="rsync.jp.netbsd.org"
 #METHOD="rsync://"
 #DIRECTORY="/anoncvs"
 #EXTERNAL=""
 
+# alternate site using rsh (hopefully over a private link! :-)
+#
 #SITE=""
-#METHOD=woods@whome.planix.com:
-#DIRECTORY=/u5/NetBSD-CVS/
+#METHOD="woods@whome.planix.com:"
+#DIRECTORY="/u5/NetBSD-CVS/"		# XXX not sure this is right any more
 #EXTERNAL="-e rsh"
 
+# WARNING:  this script could fail to interlock properly if it can be
+# invoked simultaneously with more than one name!  Don't do that!
+# 
 LOCKDIR=/tmp/$(basename $0).lock
 
 if [ -e $LOCKDIR ] ; then
@@ -41,7 +64,7 @@ fi
 (
 	while true; do
 	        printf "START:%s: " "$(date '+%Y/%m/%d-%T')"
-		rsync -rlptgoD -vz ${EXTERNAL} --blocking-io --stats --delete --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} /cvs/master/m-NetBSD/
+		rsync -rlptgoD -vz ${EXTERNAL} --blocking-io --stats --delete --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
 	        if [ $? -eq 0 ]; then
 	                break
 	        fi
@@ -58,8 +81,6 @@ fi
 #
 grep -v '/$' /var/log/rsync-netbsd-cvs
 
-WORK_DIRS="/work/NetBSD/doc /work/NetBSD/src /work/NetBSD/xsrc /most/var/httpd/htdocs-netbsd.robohack.ca"
-
 for work_dir in $WORK_DIRS; do
 	echo "Updating: $work_dir"
 	echo ""
@@ -72,3 +93,5 @@ if [ ! -d $LOCKDIR ] ; then
 	exit 1
 fi
 rmdir $LOCKDIR
+
+exit $?
