@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.30 2003/09/04 06:38:01 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.31 2003/09/04 06:56:17 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -127,6 +127,7 @@ echo ""
 #
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/bin/awk"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/bin/fgrep"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/bin/nc"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/etc/namedb/master"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/lib/libcrack"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/libexec/fingerd/samples"
@@ -143,6 +144,7 @@ LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/flc/BNF"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/idecrypt"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/lmhw"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/mkcrackdict"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/update-protocols"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/tools/mkcrackdict"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/tools/newsyslog"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/tools/pkcrackdict"
