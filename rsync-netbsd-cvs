@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.45 2005/01/04 21:13:34 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.46 2005/01/08 21:30:49 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -18,7 +18,13 @@ export PATH
 #RSYNC_DEBUG="-vv -n"
 #CVS_DEBUG="-n"
 
-# NOTE:  If you probably want the following two files in ${LOCAL_REPO}:
+# location of the local repository
+#
+# WARNING: this pathname needs a trailing slash!
+#
+REPO_DIR="/cvs/master/m-NetBSD/main/"
+
+# NOTE:  If you probably want the following two files in ${REPO_DIR}:
 #
 # main/CVSROOT/cvsignore:
 #	obj
@@ -27,9 +33,11 @@ export PATH
 #	work.*
 #
 # main/CVSROOT/config:
+#	LockDir=/tmp
+#	LogHistory=
 #	tag=NetBSD
 #
-# and you'll want to make them immutable:  'chflags +schg'
+# and you'll want to make them immutable:  'chflags schg'
 
 # places to run "cvs update" after the rsync is done
 #
@@ -43,39 +51,49 @@ WORK_DIRS="/work/NetBSD/othersrc /work/NetBSD/src /work/NetBSD/src-1.6 /work/Net
 #	remote configuration
 #
 
+# ``Rsync service for the "anoncvs" module is moving from ftp.netbsd.org to
+# anoncvs.netbsd.org in the near future.  The new service is available now.
+# Please see http://mail-index.netbsd.org/netbsd-users/2004/03/29/0010.html
+# for important details.''
+#
 #SITE="anoncvs.netbsd.org"
 #METHOD="rsync://"
-# aka the "module":
-#DIRECTORY="/cvsroot"
+#DIRECTORY="/cvsroot/"		# aka the "module", with a trailing slash!
+#EXTERNAL=""
 #
-# The "main" sub-directory doesn't exist here...
-# WARNING: this pathname needs a trailing slash!
+# The "main" sub-directory doesn't exist at anoncvs.netbsd.org, so we
+# must include it in the local repo parameter to rsync
 #
-LOCAL_REPO="/cvs/master/m-NetBSD/main/"
-EXTERNAL=""
+#LOCAL_REPO=${REPO_DIR}
 
-# old, and still available site
+# old, but still available, master site, allows just a few simultaneous connections
 #
 SITE="rsync.netbsd.org"
 METHOD="rsync://"
-DIRECTORY="/anoncvs"
-LOCAL_REPO="/cvs/master/m-NetBSD/main"
+DIRECTORY="/anoncvs/"
 EXTERNAL=""
+#
+# The "main" sub-directory _does_ exist at rsync.netbsd.org...
+#
+LOCAL_REPO=${REPO_DIR%%main/}
 
 # alternate site
 #
 #SITE="rsync.jp.netbsd.org"
 #METHOD="rsync://"
-#DIRECTORY="/anoncvs"
-#LOCAL_REPO="/cvs/master/m-NetBSD/main/"
+#DIRECTORY="/anoncvs/"
+#
+# Does the "main" sub-directory exist at rsync.jp.netbsd.org?
+#
+#LOCAL_REPO=${REPO_DIR}
 #EXTERNAL=""
 
-# alternate site using rsh (hopefully over a private link! :-)
+# alternate site showing use of rsh
 #
 #SITE=""
 #METHOD="woods@whome.planix.com:"
 #DIRECTORY="/u5/NetBSD-CVS/"		# XXX not sure this is right any more
-#LOCAL_REPO="/cvs/master/m-NetBSD/main/"
+#LOCAL_REPO=${REPO_DIR}
 #EXTERNAL="-e rsh --blocking-io"
 
 # WARNING:  this script could fail to interlock properly if it can be
@@ -121,7 +139,7 @@ cp /var/log/rsync-netbsd-cvs /var/log/rsync-netbsd-cvs.old
 		# no newline in case someone's doing a 'tail -f'....
 	        printf "PAUSE:%s: " "$(date '+%Y/%m/%d-%T')"
 	        sleep 120
-	        echo "RESTART"
+n	        echo "RESTART"
 	done
         printf "DONE:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
 ) > /var/log/rsync-netbsd-cvs 2>&1
@@ -139,61 +157,62 @@ echo ""
 # we could make these immutable but since they are directories that
 # might just cause more problems than it solves...
 #
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/cyrus-imapd21-cyradm"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smail"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smail/files"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smail/scripts"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smail+cyrus"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smtprc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/smtprc/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/vrfy"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/mail/vrfy/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/net/eping"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/net/eping/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/net/whoson/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/pkgtools/mailwrapper"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/pkgtools/mailwrapper/files"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/sysutils/pwgen/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/www/apache+modssl-local"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/www/apache+modssl-local/files"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/www/apache+modssl-local/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/pkgsrc/x11/xterm/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/bin/awk"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/bin/fgrep"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/bin/nc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/dist/dhcp/contrib/ms2isc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/dist/dhcp/doc/ja_JP.eucJP"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/etc/namedb/master"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/lib/libcrack"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/fingerd/samples"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/pkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs/cmd"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs/com"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs/doc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs/hdr"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs/help.d"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs/util"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/unpkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/regress/usr.sbin"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/regress/usr.sbin/pwd_mkdb"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/grep"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/host"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/PSD.doc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/testpasswd"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/vacation/librfc2822"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/xd"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/flc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/flc/BNF"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/idecrypt"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/lmhw"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/mkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/update-protocols"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/tools/mkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/tools/newsyslog"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/tools/pkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/xsrc/xc/programs/xterm/X11"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/cyrus-imapd21-cyradm"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail/files"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail/scripts"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail+cyrus"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smtprc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smtprc/patches"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/vrfy"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/vrfy/patches"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/net/eping"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/net/eping/patches"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/net/whoson/patches"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/pkgtools/mailwrapper"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/pkgtools/mailwrapper/files"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/sysutils/pwgen/patches"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/www/apache+modssl-local"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/www/apache+modssl-local/files"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/www/apache+modssl-local/patches"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/x11/xcb/patches"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/x11/xterm/patches"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/bin/awk"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/bin/fgrep"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/bin/nc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/dist/dhcp/contrib/ms2isc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/dist/dhcp/doc/ja_JP.eucJP"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/etc/namedb/master"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/lib/libcrack"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/fingerd/samples"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/pkcrackdict"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs/cmd"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs/com"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs/doc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs/hdr"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs/help.d"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs/util"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/unpkcrackdict"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/regress/usr.sbin"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/regress/usr.sbin/pwd_mkdb"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/grep"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/host"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/sccs"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/sccs/PSD.doc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/testpasswd"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/vacation/librfc2822"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/xd"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.sbin/flc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.sbin/flc/BNF"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.sbin/idecrypt"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.sbin/lmhw"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.sbin/mkcrackdict"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.sbin/update-protocols"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/tools/mkcrackdict"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/tools/newsyslog"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/tools/pkcrackdict"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/xsrc/xc/programs/xterm/X11"
 
 install -d -m 775 ${LOCAL_MKDIRS}
 
