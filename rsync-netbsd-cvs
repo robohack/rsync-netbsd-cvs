@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.37 2004/10/10 17:44:01 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.38 2004/11/02 19:28:45 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -169,6 +169,12 @@ LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/lib/libcrack"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/fingerd/samples"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/pkcrackdict"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs/cmd"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs/com"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs/doc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs/hdr"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs/help.d"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/sccs/util"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/libexec/unpkcrackdict"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/regress/usr.sbin"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/regress/usr.sbin/pwd_mkdb"
@@ -176,12 +182,6 @@ LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/grep"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/host"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/PSD.doc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/cmd"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/com"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/doc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/hdr"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/help.d"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/util"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/testpasswd"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/vacation/librfc2822"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/xd"
