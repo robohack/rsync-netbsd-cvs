@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.23 2003/08/03 18:11:51 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.24 2003/08/13 14:53:25 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -127,6 +127,7 @@ LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/usr.sbin/mkcrackdict"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/tools/mkcrackdict"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/tools/newsyslog"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/src/tools/pkcrackdict"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/main/xsrc/xc/programs/xterm/X11"
 
 install -d -m 775 ${LOCAL_MKDIRS}
 
