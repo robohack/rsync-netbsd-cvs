@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.11 2002/01/18 20:10:30 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.12 2002/01/20 21:45:53 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -69,10 +69,13 @@ fi
 	while true; do
 	        printf "START:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
 		rsync -rlptgoD -vz ${EXTERNAL} --stats --delete --delete-after --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
-	        if [ $? -eq 0 ]; then
+		rc=$?
+	        if [ $rc -eq 0 ]; then
 	                break
+		else
+			echo ""
+			printf "FAILED:%s: rsync exited with code: %d\n" "$(date '+%Y/%m/%d-%T')" $rc
 	        fi
-	        echo ""
 		# no newline in case someone's doing a 'tail -f'....
 	        printf "PAUSE:%s: " "$(date '+%Y/%m/%d-%T')"
 	        sleep 120
