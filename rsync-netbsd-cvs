@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.2 2001/06/06 18:06:43 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.3 2001/06/06 18:10:31 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -42,7 +42,7 @@ EXTERNAL=""
 #SITE=""
 #METHOD="woods@whome.planix.com:"
 #DIRECTORY="/u5/NetBSD-CVS/"		# XXX not sure this is right any more
-#EXTERNAL="-e rsh"
+#EXTERNAL="-e rsh --blocking-io"
 
 # WARNING:  this script could fail to interlock properly if it can be
 # invoked simultaneously with more than one name!  Don't do that!
@@ -64,7 +64,7 @@ fi
 (
 	while true; do
 	        printf "START:%s: " "$(date '+%Y/%m/%d-%T')"
-		rsync -rlptgoD -vz ${EXTERNAL} --blocking-io --stats --delete --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
+		rsync -rlptgoD -vz ${EXTERNAL} --stats --delete --delete-after --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
 	        if [ $? -eq 0 ]; then
 	                break
 	        fi
