@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.35 2004/05/05 19:15:03 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.36 2004/10/04 16:12:57 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -159,7 +159,14 @@ LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/grep"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/host"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/PSD.doc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/cmd"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/com"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/doc"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/hdr"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/help.d"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/sccs/util"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/testpasswd"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/vacation/librfc2822"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.bin/xd"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/flc"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${LOCAL_REPO}/src/usr.sbin/flc/BNF"
