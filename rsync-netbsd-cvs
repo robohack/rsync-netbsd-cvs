@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.16 2003/03/08 19:17:18 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.17 2003/04/03 16:56:53 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -95,7 +95,7 @@ for work_dir in $WORK_DIRS; do
 	echo "================================================================"
         printf "\nSTART:%s: cvs update $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 	cd $work_dir && cvs -u -q update -P -d
-        printf "\nDONE:%s: updating $work_dir\n" "$(date '+%Y/%m/%d-%T')"
+        printf "\nDONE:%s: updating $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 	if [ -x /usr/pkg/bin/lintpkgsrc -a -f $work_dir/packages-to-upgrade -a $(basename $work_dir) = "pkgsrc" ] ; then
 		/usr/pkg/bin/lintpkgsrc -P $work_dir -i | tee $work_dir/packages-to-upgrade.new
 		if [ -s $work_dir/packages-to-upgrade.new ] ; then
@@ -107,7 +107,7 @@ done
 for work_dir in $WORK_DIRS_CHECK; do
         printf "\nSTART:%s: cvs -n update $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 	cd $work_dir && cvs -u -nq update -P -d 2>&1 | fgrep -v 'cvs update: New directory'
-        printf "\nDONE:%s: checking $work_dir\n" "$(date '+%Y/%m/%d-%T')"
+        printf "\nDONE:%s: checking $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 done
 
 if [ ! -d $LOCKDIR ] ; then
