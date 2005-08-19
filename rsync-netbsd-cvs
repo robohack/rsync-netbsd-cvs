@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.52 2005/05/04 18:29:12 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.53 2005/08/19 08:54:32 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -51,31 +51,34 @@ WORK_DIRS="/work/NetBSD/othersrc /work/NetBSD/src /work/NetBSD/src-1.6 /work/Net
 #	remote configuration
 #
 
-# ``Rsync service for the "anoncvs" module is moving from ftp.netbsd.org to
-# anoncvs.netbsd.org in the near future.  The new service is available now.
-# Please see http://mail-index.netbsd.org/netbsd-users/2004/03/29/0010.html
-# for important details.''
+# master NetBSD site....
 #
-#SITE="anoncvs.netbsd.org"
-#METHOD="rsync://"
-#DIRECTORY="/cvsroot/"		# aka the "module", with a trailing slash!
-#EXTERNAL=""
+SITE="anoncvs.netbsd.org"
+METHOD="rsync://"
+DIRECTORY="/cvsroot/"		# aka the "module", with a trailing slash!
+EXTERNAL=""
 #
 # The "main" sub-directory doesn't exist at anoncvs.netbsd.org, so we
 # must include it in the local repo parameter to rsync
 #
-#LOCAL_REPO=${REPO_DIR}
+LOCAL_REPO=${REPO_DIR}
 
-# old, but still available, master site, allows just a few simultaneous connections
+# old site (was another name for the same IP as ftp.netbsd.org):
 #
-SITE="rsync.netbsd.org"
-METHOD="rsync://"
-DIRECTORY="/anoncvs/"
-EXTERNAL=""
+#    "Rsync service for the "anoncvs" module has moved from ftp.netbsd.org to
+#    anoncvs.netbsd.org.
+#
+#    Please see http://mail-index.netbsd.org/netbsd-users/2004/03/29/0010.html
+#    for important details."
+#
+#SITE="rsync.netbsd.org"
+#METHOD="rsync://"
+#DIRECTORY="/anoncvs/"
+#EXTERNAL=""
 #
 # The "main" sub-directory _does_ exist at rsync.netbsd.org...
 #
-LOCAL_REPO=${REPO_DIR%%main/}
+#LOCAL_REPO=${REPO_DIR%%main/}
 
 # alternate site
 #
@@ -138,8 +141,8 @@ cp /var/log/rsync-netbsd-cvs /var/log/rsync-netbsd-cvs.old
 	        fi
 		# no newline in case someone's doing a 'tail -f'....
 	        printf "PAUSE:%s: " "$(date '+%Y/%m/%d-%T')"
-	        sleep 120
-n	        echo "RESTART"
+	        sleep 60
+	        echo "RESTART"
 	done
         printf "DONE:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
 ) > /var/log/rsync-netbsd-cvs 2>&1
