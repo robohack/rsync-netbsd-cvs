@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.53 2005/08/19 08:54:32 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.54 2006/05/01 17:20:10 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -121,7 +121,7 @@ cp /var/log/rsync-netbsd-cvs /var/log/rsync-netbsd-cvs.old
 (
 	while true; do
 	        printf "START:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
-		rsync ${DEBUG} -rlptgoD -vz ${EXTERNAL} --stats --delete --delete-after --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
+		rsync ${DEBUG} -rlptHS -vz ${EXTERNAL} --stats --delete --delete-after --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
 		rc=$?
 		#
 		# Note that E#23 happens normally when rsync can't
@@ -162,6 +162,7 @@ echo ""
 #
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/benchmarks/postal/patches"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/databases/rrdtool-nodep"
+LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/databases/rrdtool-nodep/patches"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/cyrus-imapd21-cyradm"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail"
 LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail/files"
