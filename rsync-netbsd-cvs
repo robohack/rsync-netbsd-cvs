@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.56 2006/05/31 20:24:26 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.57 2008/03/11 23:36:16 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -13,16 +13,22 @@ export PATH
 #	local configuration
 #
 
-# uncomment for testing
-#
-#RSYNC_DEBUG="-vv -n"
-#CVS_DEBUG="-n"
-
 # location of the local repository
 #
 # WARNING: this pathname needs a trailing slash!
 #
 REPO_DIR="/cvs/master/m-NetBSD/main/"
+
+# A list of files possibly containing locally added directories which
+# need to be re-created in the REPO_DIR after rsync will have removed
+# them.  (since they don't exist in the remote master repository)
+#
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc/LOCALDIRS"
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc-current/LOCALDIRS"
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/src-current/LOCALDIRS"
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/src/LOCALDIRS"
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/xsrc-current/LOCALDIRS"
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/xsrc/LOCALDIRS"
 
 # NOTE:  If you probably want the following two files in ${REPO_DIR}:
 #
@@ -41,11 +47,21 @@ REPO_DIR="/cvs/master/m-NetBSD/main/"
 
 # places to run "cvs update" after the rsync is done
 #
-WORK_DIRS="/work/NetBSD/othersrc /work/NetBSD/src /work/NetBSD/src-1.6 /work/NetBSD/xsrc /work/NetBSD/pkgsrc /most/big1/www/htdocs-netbsd.robohack.ca"
+WORK_DIRS=""
+#WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-1.6"
+WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-4"
+WORK_DIRS="${WORK_DIRS} /work/NetBSD/xsrc-4"
+WORK_DIRS="${WORK_DIRS} /work/NetBSD/othersrc"
+WORK_DIRS="${WORK_DIRS} /work/NetBSD/src"
+WORK_DIRS="${WORK_DIRS} /work/NetBSD/xsrc"
+WORK_DIRS="${WORK_DIRS} /work/NetBSD/pkgsrc"
+#WORK_DIRS="${WORK_DIRS} /home/wwwadmin/htdocs-netbsd.robohack.ca"
 
 # places to run "cvs -n update" after the rsync is done
 #
-#WORK_DIRS_CHECK="/work/woods/m-NetBSD-pkgsrc"
+WORK_DIRS_CHECK=""
+#WORK_DIRS_CHECK="${WORK_DIRS_CHECK} /work/woods/m-NetBSD-pkgsrc-2006Q4"
+#WORK_DIRS_CHECK="${WORK_DIRS_CHECK} /work/woods/m-NetBSD-pkgsrc-2007Q1"
 
 #
 #	remote configuration
@@ -99,6 +115,90 @@ LOCAL_REPO=${REPO_DIR}
 #LOCAL_REPO=${REPO_DIR}
 #EXTERNAL="-e rsh --blocking-io"
 
+#
+#	END all configuration!
+#
+
+just_make_localdirs=false
+
+DEBUG_ECHO=""
+#
+# use ${DQ} in front of and after any quoted multi-token parameters on
+# command lines that are preceded by "${DEBUG_ECHO} \"
+#
+DQ=""
+RSYNC_DEBUG=""
+CVS_DEBUG=""
+
+EX_USAGE=2
+
+# XXX we should have "just rsync" and "just update" options too!
+#
+OPT_STRING=dl
+
+argv0=$(basename $0)
+
+mktable ()
+{
+	sed				\
+		-e '/^[ 	]*#/d'	\
+		-e 's/#.*$//'		\
+		-e '/^[ 	]*$/d'	\
+	${1+"$@"}
+}
+
+# re-create directories in the REPO_DIR that we have local but of
+# course uncommitted new files within...
+#
+# we could make these immutable but since they are directories that
+# might just cause more problems than it solves...
+#
+make_localdirs ()
+{
+	for local_dir_list in ${LOCALDIRS_LISTS}; do
+		if [ -s ${local_dir_list} ] ; then
+			more_dirs=$(mktable ${local_dir_list} | sed -e "s|^|${REPO_DIR}|")
+			LOCAL_MKDIRS="${LOCAL_MKDIRS} ${more_dirs}"
+			unset more_dirs
+		fi
+	done
+
+	$DEBUG_ECHO \
+	install -d -m 775 ${LOCAL_MKDIRS}
+}
+
+usage_error ()
+{
+	echo "Usage: $argv0 [-${OPT_STRING}]" 1>&2
+	exit $EX_USAGE
+}
+
+while getopts $OPT_STRING OPT; do
+	case "$OPT" in
+	d)
+		# for testing
+		#
+		RSYNC_DEBUG="-vv -n"
+		CVS_DEBUG="-n"
+		DEBUG_ECHO=echo
+		DQ="'"
+		;;
+	l)
+		just_make_localdirs=true
+		;;
+	\?)
+		usage_error
+		;;
+	esac
+done
+shift $(($OPTIND - 1))
+[ $# -ne 0 ] && usage_error
+
+if $just_make_localdirs; then
+	make_localdirs
+	exit 0
+fi
+
 # WARNING:  this script could fail to interlock properly if it can be
 # invoked simultaneously with more than one name!  Don't do that!
 # 
@@ -120,10 +220,11 @@ cp /var/log/rsync-netbsd-cvs /var/log/rsync-netbsd-cvs.old
 
 (
 	while true; do
-	        printf "START:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
-		rsync ${DEBUG} -rlptHS -vz ${EXTERNAL} --stats --delete --delete-after --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
+		printf "START:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
+		rsync ${RSYNC_DEBUG} -rlptHS --timeout=86000 -vz ${EXTERNAL} --stats --delete --delete-after --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
 		rc=$?
 		#
+
 		# Note that E#23 happens normally when rsync can't
 		# delete the files I've made purposefully immutable
 		# specifically so that it can't delete them.
@@ -133,18 +234,18 @@ cp /var/log/rsync-netbsd-cvs /var/log/rsync-netbsd-cvs.old
 		# then we should just give up and report what happened
 		# and wait for tomorrow to try again
 		#
-	        if [ $rc -eq 0 -o $rc -eq 23 ]; then
-	                break
+		if [ $rc -eq 0 -o $rc -eq 23 ]; then
+			break
 		else
 			echo ""
 			printf "FAILED:%s: rsync exited with code: %d\n" "$(date '+%Y/%m/%d-%T')" $rc
-	        fi
+		fi
 		# no newline in case someone's doing a 'tail -f'....
-	        printf "PAUSE:%s: " "$(date '+%Y/%m/%d-%T')"
-	        sleep 60
-	        echo "RESTART"
+		printf "PAUSE:%s: " "$(date '+%Y/%m/%d-%T')"
+		sleep 60
+		echo "RESTART"
 	done
-        printf "DONE:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
+	printf "DONE:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
 ) > /var/log/rsync-netbsd-cvs 2>&1
 
 # this produces the Cron report from the raw log by ignoring any line
@@ -154,84 +255,20 @@ cp /var/log/rsync-netbsd-cvs /var/log/rsync-netbsd-cvs.old
 grep -v '/$' /var/log/rsync-netbsd-cvs
 echo ""
 
-# re-create directories in the REPO that we have local but of course
-# uncommitted new files within...
-#
-# we could make these immutable but since they are directories that
-# might just cause more problems than it solves...
-#
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/audio/libao-nas"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/benchmarks/postal/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/databases/rrdtool-nodep"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/databases/rrdtool-nodep/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/devel/tre/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/cyrus-imapd21-cyradm"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail/files"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail/scripts"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail+cyrus"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail+cyrus+whoson"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smail+whoson"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smtprc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/smtprc/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/vrfy"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/mail/vrfy/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/net/eping"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/net/eping/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/net/whoson/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/pkgtools/mailwrapper"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/pkgtools/mailwrapper/files"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/sysutils/pwgen/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/www/apache+modssl-local"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/www/apache+modssl-local/files"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/www/apache+modssl-local/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/x11/xcb/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/pkgsrc/x11/xterm/patches"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/bin/awk"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/bin/fgrep"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/bin/nc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/dist/dhcp/contrib/ms2isc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/dist/dhcp/doc/ja_JP.eucJP"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/etc/namedb/master"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/lib/libcrack"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/fingerd/samples"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/pkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs/cmd"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs/com"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs/doc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs/hdr"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs/help.d"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/sccs/util"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/libexec/unpkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/regress/usr.sbin"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/regress/usr.sbin/pwd_mkdb"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/grep"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/host"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/sccs"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/sccs/PSD.doc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/testpasswd"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/vacation/librfc2822"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.bin/xd"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.sbin/flc"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.sbin/flc/BNF"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.sbin/idecrypt"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.sbin/lmhw"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.sbin/mkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/usr.sbin/update-protocols"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/tools/mkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/tools/newsyslog"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/src/tools/pkcrackdict"
-LOCAL_MKDIRS="${LOCAL_MKDIRS} ${REPO_DIR}/xsrc/xc/programs/xterm/X11"
-
-install -d -m 775 ${LOCAL_MKDIRS}
-
+make_localdirs
 
 for work_dir in $WORK_DIRS; do
 	echo "================================================================"
-        printf "\nSTART:%s: cvs update $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
-	cd $work_dir && cvs ${CVS_DEBUG} -u -q update -P -d
-        printf "\nDONE:%s: updating $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
+	printf "\nSTART:%s: cvs update $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
+	if [ ! -d $work_dir ]; then
+		# XXX need a way to specify the module and repository
+		#
+		#cd ${work_dir%/*} && cvs ${work_dir_repo} ${CVS_DEBUG} -u -q co -P -d ${work_dir##*/} ${work_dir_module}
+		echo "WARNING: there is no ${work_dir} yet!"
+	else
+		cd $work_dir && cvs ${CVS_DEBUG} -u -q update -P -d
+	fi
+	printf "\nDONE:%s: updating $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 	if [ -x /usr/pkg/bin/lintpkgsrc -a -f $work_dir/packages-to-upgrade -a $(basename $work_dir) = "pkgsrc" ] ; then
 		/usr/pkg/bin/lintpkgsrc -P $work_dir -i | tee $work_dir/packages-to-upgrade.new
 		if [ -s $work_dir/packages-to-upgrade.new ] ; then
@@ -241,9 +278,13 @@ for work_dir in $WORK_DIRS; do
 done
 
 for work_dir in $WORK_DIRS_CHECK; do
-        printf "\nSTART:%s: cvs -n update $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
-	cd $work_dir && cvs -u -nq update -P -d 2>&1 | fgrep -v 'cvs update: New directory'
-        printf "\nDONE:%s: checking $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
+	printf "\nSTART:%s: cvs -n update $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
+	if [ ! -d $work_dir ]; then
+		echo "WARNING: there is no ${work_dir} yet!"
+	else
+		cd $work_dir && cvs -u -nq update -P -d 2>&1 | fgrep -v 'cvs update: New directory'
+	fi
+	printf "\nDONE:%s: checking $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 done
 
 if [ ! -d $LOCKDIR ] ; then
