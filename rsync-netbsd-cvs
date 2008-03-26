@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.58 2008/03/26 15:53:59 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.59 2008/03/26 15:57:11 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -135,7 +135,7 @@ EX_USAGE=2
 
 # XXX we should have "just rsync" and "just update" options too!
 #
-OPT_STRING=dl
+OPT_STRING=dlr
 
 argv0=$(basename $0)
 
