@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.57 2008/03/11 23:36:16 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.58 2008/03/26 15:53:59 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -120,6 +120,7 @@ LOCAL_REPO=${REPO_DIR}
 #
 
 just_make_localdirs=false
+just_rsync=false
 
 DEBUG_ECHO=""
 #
@@ -185,6 +186,9 @@ while getopts $OPT_STRING OPT; do
 		;;
 	l)
 		just_make_localdirs=true
+		;;
+	r)
+		just_rsync=true
 		;;
 	\?)
 		usage_error
@@ -256,6 +260,10 @@ grep -v '/$' /var/log/rsync-netbsd-cvs
 echo ""
 
 make_localdirs
+
+if $just_rsync; then
+	exit 0
+fi
 
 for work_dir in $WORK_DIRS; do
 	echo "================================================================"
