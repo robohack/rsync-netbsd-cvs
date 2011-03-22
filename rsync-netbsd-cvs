@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.61 2010/04/21 19:49:17 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.62 2011/03/22 21:51:18 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -24,11 +24,11 @@ REPO_DIR="/cvs/master/m-NetBSD/main/"
 # them.  (since they don't exist in the remote master repository)
 #
 LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc/LOCALDIRS"
-LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc-current/LOCALDIRS"
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc-current/LOCALDIRS"	# not normally used
 LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/src-current/LOCALDIRS"
-LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/src/LOCALDIRS"
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/src/LOCALDIRS"			# not normally used
 LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/xsrc-current/LOCALDIRS"
-LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/xsrc/LOCALDIRS"
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/xsrc/LOCALDIRS"		# not normally used
 
 # NOTE:  If you probably want the following two files in ${REPO_DIR}:
 #
