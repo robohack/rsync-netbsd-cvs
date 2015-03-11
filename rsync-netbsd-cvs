@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.62 2011/03/22 21:51:18 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.63 2015/03/11 07:16:52 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -17,7 +17,7 @@ export PATH
 #
 # WARNING: this pathname needs a trailing slash!
 #
-REPO_DIR="/cvs/master/m-NetBSD/main/"
+REPO_DIR="/vcs/master/m-NetBSD/main/"
 
 # A list of files possibly containing locally added directories which
 # need to be re-created in the REPO_DIR after rsync will have removed
@@ -64,6 +64,7 @@ WORK_DIRS="${WORK_DIRS} /work/NetBSD/pkgsrc"
 WORK_DIRS_CHECK=""
 #WORK_DIRS_CHECK="${WORK_DIRS_CHECK} /work/woods/m-NetBSD-pkgsrc-2006Q4"
 #WORK_DIRS_CHECK="${WORK_DIRS_CHECK} /work/woods/m-NetBSD-pkgsrc-2007Q1"
+#WORK_DIRS_CHECK="${WORK_DIRS_CHECK} /work/woods/m-NetBSD-pkgsrc-2010Q1"
 
 #
 #	remote configuration
