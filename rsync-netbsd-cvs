@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.64 2017/09/27 05:29:01 woods Exp"
+#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.65 2018/09/30 17:39:23 woods Exp"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -23,8 +23,8 @@ REPO_DIR="/vcs/master/m-NetBSD/main/"
 # need to be re-created in the REPO_DIR after rsync will have removed
 # them.  (since they don't exist in the remote master repository)
 #
-LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc/LOCALDIRS"
-LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc-current/LOCALDIRS"	# not normally used
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc/LOCALDIRS"		# not normally used
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc-current/LOCALDIRS"
 LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/src-current/LOCALDIRS"
 LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/src/LOCALDIRS"			# not normally used
 LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/xsrc-current/LOCALDIRS"
@@ -47,16 +47,23 @@ LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/xsrc/LOCALDIRS"		# not normally used
 
 # places to run "cvs update" after the rsync is done
 #
+# N.B.:  You probably do not want to rely on the automatic "checkout" feature
+# below, at least not for large modules like NetBSD, pkgsrc, etc., as the
+# resulting email will be WAY too large.
+#
 WORK_DIRS=""
 #WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-1.6"
 #WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-4"
 #WORK_DIRS="${WORK_DIRS} /work/NetBSD/xsrc-4"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-5"
+WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-7"
+WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-8"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/xsrc-5"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/othersrc"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/src"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/xsrc"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/pkgsrc"
+#WORK_DIRS="${WORK_DIRS} /work/NetBSD/htdocs"
 #WORK_DIRS="${WORK_DIRS} /home/wwwadmin/htdocs-netbsd.robohack.ca"
 
 # places to run "cvs -n update" after the rsync is done
@@ -273,10 +280,33 @@ for work_dir in $WORK_DIRS; do
 	echo "================================================================"
 	printf "\nSTART:%s: cvs update $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 	if [ ! -d $work_dir ]; then
-		# XXX need a way to specify the module and repository
-		#
-		#cd ${work_dir%/*} && cvs ${work_dir_repo} ${CVS_DEBUG} -u -q co -P -d ${work_dir##*/} ${work_dir_module}
+		case ${work_dir} in
+		/work/NetBSD*)
+			work_dir_repo="-d /cvs/master/m-NetBSD/main"
+			work_dir_dir=${work_dir%/*}
+			work_dir_base=${work_dir##*/}
+			work_dir_module=${work_dir_base%-*}
+			# xxx this probably won't work very well
+			case ${work_dir_module} in
+			pkgsrc)
+				case ${work_dir_base} in
+				*-*)
+					work_dir_tag="-r ${work_dir_base}"
+					;;
+				esac
+				;;
+			xsrc|src)
+				case ${work_dir_base} in
+				*-*)
+					work_dir_tag="-r netbsd-${work_dir_base##*-}"
+					;;
+				esac
+				;;
+			esac
+			;;
+		esac
 		echo "WARNING: there is no ${work_dir} yet!"
+		cd ${work_dir_dir} && cvs ${work_dir_repo} ${CVS_DEBUG} -u -q checkout -P ${work_dir_tag} -d ${work_dir_base} ${work_dir_module}
 	else
 		cd $work_dir && cvs ${CVS_DEBUG} -u -q update -P -d
 	fi
