@@ -4,7 +4,7 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:rsync-netbsd-cvs,v 1.65 2018/09/30 17:39:23 woods Exp"
+#ident "@(#)LOCAL:$Id: rsync-netbsd-cvs,v 1.66 2021/03/20 17:39:37 woods Exp $"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -56,8 +56,8 @@ WORK_DIRS=""
 #WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-4"
 #WORK_DIRS="${WORK_DIRS} /work/NetBSD/xsrc-4"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-5"
-WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-7"
-WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-8"
+#WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-7"
+#WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-8"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/xsrc-5"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/othersrc"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/src"
