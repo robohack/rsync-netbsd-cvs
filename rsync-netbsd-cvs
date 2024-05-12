@@ -4,7 +4,6 @@
 #
 # also updates local working directories....
 #
-#ident "@(#)LOCAL:$Id: rsync-netbsd-cvs,v 1.66 2021/03/20 17:39:37 woods Exp $"
 
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
@@ -25,23 +24,19 @@ REPO_DIR="/vcs/master/m-NetBSD/main/"
 #
 LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc/LOCALDIRS"		# not normally used
 LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc-current/LOCALDIRS"
-LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/src-current/LOCALDIRS"
 LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/src/LOCALDIRS"			# not normally used
-LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/xsrc-current/LOCALDIRS"
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/src-current/LOCALDIRS"
 LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/xsrc/LOCALDIRS"		# not normally used
+LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/xsrc-current/LOCALDIRS"
 
-# NOTE:  If you probably want the following two files in ${REPO_DIR}:
-#
-# main/CVSROOT/cvsignore:
-#	obj
-#	obj.*
-#	work
-#	work.*
+# NOTE:  If you probably want the following files in ${REPO_DIR}:
 #
 # main/CVSROOT/config:
 #	LockDir=/tmp
 #	LogHistory=
-#	tag=NetBSD
+#	LocalKeyword=NetBSD=CVSHeader
+#	KeywordExpand=iNetBSD,Name,Date,Author,Revision
+#	KeywordExpand=eId,CVSHeader,Header
 #
 # and you'll want to make them immutable:  'chflags schg'
 
@@ -161,18 +156,18 @@ mktable ()
 	${1+"$@"}
 }
 
-# re-create directories in the REPO_DIR that we have local but of
-# course uncommitted new files within...
+# re-create directories in the REPO_DIR that we have local (but of
+# course uncommitted) new files within...
 #
-# we could make these immutable but since they are directories that
-# might just cause more problems than it solves...
+# xxx this should be re-written to allow for spaces, etc. in pathnames, and to
+# allow for possibly very long lists....
 #
 make_localdirs ()
 {
-	for local_dir_list in ${LOCALDIRS_LISTS}; do
-		if [ -s ${local_dir_list} ] ; then
-			more_dirs=$(mktable ${local_dir_list} | sed -e "s|^|${REPO_DIR}|")
-			LOCAL_MKDIRS="${LOCAL_MKDIRS} ${more_dirs}"
+	for local_dirs_list in ${LOCALDIRS_LISTS}; do
+		if [ -s ${local_dirs_list} ] ; then
+			more_dirs=$(mktable ${local_dirs_list} | sed -e "s|^|${REPO_DIR}|")
+			LOCAL_MKDIRS=$(echo ${LOCAL_MKDIRS} ${more_dirs} | sort -u)
 			unset more_dirs
 		fi
 	done
