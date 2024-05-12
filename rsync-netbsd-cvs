@@ -55,16 +55,19 @@ WORK_DIRS=""
 #WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-1.6"
 #WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-4"
 #WORK_DIRS="${WORK_DIRS} /work/NetBSD/xsrc-4"
-WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-5"
+#WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-5"
 #WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-7"
 #WORK_DIRS="${WORK_DIRS} /work/NetBSD/src-8"
-WORK_DIRS="${WORK_DIRS} /work/NetBSD/xsrc-5"
+#WORK_DIRS="${WORK_DIRS} /work/NetBSD/xsrc-5"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/othersrc"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/src"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/xsrc"
 WORK_DIRS="${WORK_DIRS} /work/NetBSD/pkgsrc"
 #WORK_DIRS="${WORK_DIRS} /work/NetBSD/htdocs"
 #WORK_DIRS="${WORK_DIRS} /home/wwwadmin/htdocs-netbsd.robohack.ca"
+# XXX sadly these are NOT in the anoncvs collection
+#WORK_DIRS="${WORK_DIRS} /work/NetBSD/CVSROOT"
+#WORK_DIRS="${WORK_DIRS} /work/NetBSD/localsrc"
 
 # places to run "cvs -n update" after the rsync is done
 #
