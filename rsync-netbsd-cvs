@@ -8,6 +8,9 @@
 PATH=$PATH:/usr/pkg/sbin:/usr/pkg/bin:/usr/local/sbin:/usr/local/bin
 export PATH
 
+LC_ALL=C
+export LC_ALL
+
 #
 #	local configuration
 #
@@ -21,6 +24,9 @@ REPO_DIR="/vcs/master/m-NetBSD/main/"
 # A list of files possibly containing locally added directories which
 # need to be re-created in the REPO_DIR after rsync will have removed
 # them.  (since they don't exist in the remote master repository)
+#
+# n.b.:  any whitespace or special characters in pathnames must be quoted or
+# escaped in a manner compatible with xargs(1).
 #
 LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc/LOCALDIRS"		# not normally used
 LOCALDIRS_LISTS="${LOCALDIRS_LISTS} /usr/pkgsrc-current/LOCALDIRS"
@@ -161,21 +167,19 @@ mktable ()
 # re-create directories in the REPO_DIR that we have local (but of
 # course uncommitted) new files within...
 #
-# xxx this should be re-written to allow for spaces, etc. in pathnames, and to
-# allow for possibly very long lists....
+# xxx hmmm....:   | tr '\n' '\0' | xargs -0 install -d -m 775 --
 #
 make_localdirs ()
 {
 	for local_dirs_list in ${LOCALDIRS_LISTS}; do
 		if [ -s ${local_dirs_list} ] ; then
-			more_dirs=$(mktable ${local_dirs_list} | sed -e "s|^|${REPO_DIR}|")
-			LOCAL_MKDIRS=$(echo ${LOCAL_MKDIRS} ${more_dirs} | sort -u)
-			unset more_dirs
+			mktable ${local_dirs_list} | sed -e "s|^|${REPO_DIR}|"
 		fi
-	done
-
+	done | sort -u | xargs \
 	$DEBUG_ECHO \
-	install -d -m 775 ${LOCAL_MKDIRS}
+	install -d -m 775 --
+
+	unset local_dirs_list
 }
 
 usage_error ()
