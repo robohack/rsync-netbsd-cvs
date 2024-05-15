@@ -115,13 +115,13 @@ LOCAL_REPO=${REPO_DIR}
 #LOCAL_REPO=${REPO_DIR}
 #EXTERNAL=""
 
-# alternate site showing use of rsh
+# alternate site showing use of ssh
 #
 #SITE=""
 #METHOD="woods@whome.planix.com:"
-#DIRECTORY="/u5/NetBSD-CVS/"		# XXX not sure this is right any more
+#DIRECTORY="/u5/NetBSD-CVS/"
 #LOCAL_REPO=${REPO_DIR}
-#EXTERNAL="-e rsh --blocking-io"
+#EXTERNAL="-e ssh --blocking-io"
 
 #
 #	END all configuration!
@@ -130,6 +130,7 @@ LOCAL_REPO=${REPO_DIR}
 just_make_localdirs=false
 just_rsync=false
 
+# set it to "echo" for debugging
 DEBUG_ECHO=""
 #
 # use ${DQ} in front of and after any quoted multi-token parameters on
