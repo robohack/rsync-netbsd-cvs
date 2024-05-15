@@ -140,11 +140,12 @@ DQ=""
 RSYNC_DEBUG=""
 CVS_DEBUG=""
 
+EX_OK=0
 EX_USAGE=2
 
 # XXX we should have "just rsync" and "just update" options too!
 #
-OPT_STRING=dlr
+OPT_STRING=dhlr
 
 argv0=$(basename $0)
 
@@ -183,6 +184,16 @@ usage_error ()
 	exit $EX_USAGE
 }
 
+usage_help ()
+{
+	echo "Usage: $argv0 [-${OPT_STRING}]"
+	echo "	-d	enable debug output for testing"
+	echo "	-h	print this help message"
+	echo "	-l	just run the make_localdirs part"
+	echo "	-r	just run rsync and make_localdirs (don't update work directories)"
+	exit $EX_OK
+}
+
 while getopts $OPT_STRING OPT; do
 	case "$OPT" in
 	d)
@@ -192,6 +203,9 @@ while getopts $OPT_STRING OPT; do
 		CVS_DEBUG="-n"
 		DEBUG_ECHO=echo
 		DQ="'"
+		;;
+	h)
+		usage_help
 		;;
 	l)
 		just_make_localdirs=true
