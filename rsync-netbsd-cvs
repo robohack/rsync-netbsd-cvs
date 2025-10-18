@@ -248,11 +248,13 @@ else
 	exit 1
 fi
 
+$DEBUG_ECHO \
 cp /var/log/rsync-netbsd-cvs /var/log/rsync-netbsd-cvs.old
 
-(
+{
 	while true; do
 		printf "START:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
+		$DEBUG_ECHO \
 		rsync ${RSYNC_DEBUG} -rlptHS --timeout=86000 -vz ${EXTERNAL} --stats --delete --delete-after --exclude '#cvs.lock' ${METHOD}${SITE}${DIRECTORY} ${LOCAL_REPO}
 		rc=$?
 		#
@@ -274,11 +276,12 @@ cp /var/log/rsync-netbsd-cvs /var/log/rsync-netbsd-cvs.old
 		fi
 		# no newline in case someone's doing a 'tail -f'....
 		printf "PAUSE:%s: " "$(date '+%Y/%m/%d-%T')"
+		$DEBUG_ECHO \
 		sleep 60
 		echo "RESTART"
 	done
 	printf "DONE:%s: rsync\n" "$(date '+%Y/%m/%d-%T')"
-) > /var/log/rsync-netbsd-cvs 2>&1
+} > /var/log/rsync-netbsd-cvs 2>&1
 
 # this produces the Cron report from the raw log by ignoring any line
 # which ends in a '/' (presumably it's just one of the directories
@@ -328,15 +331,24 @@ for work_dir in $WORK_DIRS; do
 			;;
 		esac
 		echo "WARNING: there is no ${work_dir} yet!"
-		cd ${work_dir_dir} && cvs ${work_dir_repo} ${CVS_DEBUG} -u -q checkout -P ${work_dir_tag} -d ${work_dir_base} ${work_dir_module}
+		(
+		cd ${work_dir_dir} && $DEBUG_ECHO \
+		cvs ${work_dir_repo} ${CVS_DEBUG} -u -q checkout -P ${work_dir_tag} -d ${work_dir_base} ${work_dir_module}
+		)
 	else
-		cd $work_dir && cvs ${CVS_DEBUG} -u -q update -P -d
+		(
+		cd $work_dir && $DEBUG_ECHO \
+		cvs ${CVS_DEBUG} -u -q update -P -d
+		)
 	fi
 	printf "\nDONE:%s: updating $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 	if [ -x /usr/pkg/bin/lintpkgsrc -a -f $work_dir/packages-to-upgrade -a $(basename $work_dir) = "pkgsrc" ] ; then
+		$DEBUG_ECHO \
 		/usr/pkg/bin/lintpkgsrc -P $work_dir -i | tee $work_dir/packages-to-upgrade.new
 		if [ -s $work_dir/packages-to-upgrade.new ] ; then
 			mv -f $work_dir/packages-to-upgrade.new  $work_dir/packages-to-upgrade
+		else
+			rm $work_dir/packages-to-upgrade.new
 		fi
 	fi
 done
@@ -346,7 +358,10 @@ for work_dir in $WORK_DIRS_CHECK; do
 	if [ ! -d $work_dir ]; then
 		echo "WARNING: there is no ${work_dir} yet!"
 	else
-		cd $work_dir && cvs -u -nq update -P -d 2>&1 | fgrep -v 'cvs update: New directory'
+		(
+		cd $work_dir &&	$DEBUG_ECHO \
+		cvs -u -nq update -P -d 2>&1 | fgrep -v 'cvs update: New directory'
+		)
 	fi
 	printf "\nDONE:%s: checking $work_dir\n\n" "$(date '+%Y/%m/%d-%T')"
 done
