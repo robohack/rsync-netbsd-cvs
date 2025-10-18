@@ -232,7 +232,7 @@ fi
 
 # WARNING:  this script could fail to interlock properly if it can be
 # invoked simultaneously with more than one name!  Don't do that!
-# 
+#
 LOCKDIR=/tmp/$(basename $0).lock
 
 if [ -e $LOCKDIR ] ; then
@@ -241,7 +241,8 @@ if [ -e $LOCKDIR ] ; then
 fi
 
 if mkdir $LOCKDIR ; then
-	: #got it!
+	: # got it!
+	trap "RC=$?; rmdir $LOCKDIR; trap 0; exit $RC" 0 1 2 3 15
 else
 	echo "Oops, just missed grabbing $LOCKDIR!" 1>&2
 	exit 1
@@ -288,8 +289,12 @@ echo ""
 
 make_localdirs
 
+if [ ! -d $LOCKDIR ] ; then
+	echo "OOPS!!!!  $LOCKDIR went missing!!!!" 1>&2
+	exit 1
+fi
+
 if $just_rsync; then
-	rmdir $LOCKDIR
 	exit 0
 fi
 
@@ -350,6 +355,5 @@ if [ ! -d $LOCKDIR ] ; then
 	echo "OOPS!!!!  $LOCKDIR went missing!!!!" 1>&2
 	exit 1
 fi
-rmdir $LOCKDIR
 
 exit $?
